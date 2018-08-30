@@ -288,7 +288,7 @@ class BelongsToMany extends Relation
      * Specify the custom pivot model to use for the relationship.
      *
      * @param  string  $class
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function using($class)
     {
@@ -301,7 +301,7 @@ class BelongsToMany extends Relation
      * Specify the custom pivot accessor to use for the relationship.
      *
      * @param  string  $accessor
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function as($accessor)
     {
@@ -317,7 +317,7 @@ class BelongsToMany extends Relation
      * @param  string  $operator
      * @param  mixed   $value
      * @param  string  $boolean
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function wherePivot($column, $operator = null, $value = null, $boolean = 'and')
     {
@@ -333,7 +333,7 @@ class BelongsToMany extends Relation
      * @param  mixed   $values
      * @param  string  $boolean
      * @param  bool    $not
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function wherePivotIn($column, $values, $boolean = 'and', $not = false)
     {
@@ -348,7 +348,7 @@ class BelongsToMany extends Relation
      * @param  string  $column
      * @param  string  $operator
      * @param  mixed   $value
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function orWherePivot($column, $operator = null, $value = null)
     {
@@ -362,7 +362,7 @@ class BelongsToMany extends Relation
      *
      * @param  string  $column
      * @param  mixed  $value
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function withPivotValue($column, $value = null)
     {
@@ -388,7 +388,7 @@ class BelongsToMany extends Relation
      *
      * @param  string  $column
      * @param  mixed   $values
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function orWherePivotIn($column, $values)
     {
@@ -592,7 +592,7 @@ class BelongsToMany extends Relation
      * Get the select columns for the relation query.
      *
      * @param  array  $columns
-     * @return array
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     protected function shouldSelect(array $columns = ['*'])
     {
@@ -926,7 +926,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $createdAt
      * @param  mixed  $updatedAt
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function withTimestamps($createdAt = null, $updatedAt = null)
     {

@@ -933,17 +933,6 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Wrap the given JSON path.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    protected function wrapJsonPath($value)
-    {
-        return '\'$."'.str_replace('->', '"."', $value).'"\'';
-    }
-
-    /**
      * Determine if the given string is a JSON selector.
      *
      * @param  string  $value
