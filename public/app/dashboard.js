@@ -10,7 +10,7 @@ anychart.onDocumentReady(function() {
         },
         dataType:"json",
         success:function(response){
-            anychart.data.loadJsonFile('http://localhost:8000/files/tradingData.json', function(data) {
+            anychart.data.loadJsonFile(site_url+'/files/tradingData.json', function(data) {
             // create data table on loaded data
             var dataTable = anychart.data.table();
             dataTable.addData(data);
