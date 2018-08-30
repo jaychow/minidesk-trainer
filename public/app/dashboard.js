@@ -1,34 +1,17 @@
 anychart.onDocumentReady(function() {
     // The data used in this sample can be obtained from the CDN
     // https://cdn.anychart.com/csv-data/csco-daily.csv
-    //anychart.data.loadCsvFile('https://cdn.anychart.com/csv-data/csco-daily.csv', function(data) {
-      // create data table on loaded data
-    //   var data = []
-    //   var year = 2017;
-    //   var month = 7;
-    //   var day = 23;
-    //   var hour = 0;
-    //   var minute = 0;
-    //   for(let i = 1; i <= 46; i++){
-    //     if(i%23 == 0){
-    //         hour = 0;
-    //         day++;
-    //     }
-    //     var item = [Date.UTC(year, month, day, hour, minute), 23.00, 23.50, 23.25, 23.40]
-    //     data.push(item);
-    //     hour++;
-    //   }
-
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url:site_url+"/trend/getJsonData",
+        url:site_url+"/trend/saveToJsonFile",
         type:"POST",
         data:{
             test:"Hallo"
         },
         dataType:"json",
-        success:function(data){
-
+        success:function(response){
+            anychart.data.loadJsonFile('http://localhost:8000/files/tradingData.json', function(data) {
+            // create data table on loaded data
             var dataTable = anychart.data.table();
             dataTable.addData(data);
 
@@ -75,6 +58,55 @@ anychart.onDocumentReady(function() {
             // initiate chart drawing
             chart.draw();
 
+
+
+            // reset the select list to the first option
+            chart.listen("annotationDrawingFinish", function(){
+               // get the number of annotations
+               var annotationsCount = plot.annotations().getAnnotationsCount();
+               if(confirm("Do you want to save this marker?") == true){
+                    $.ajax({
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url:site_url+"/trend/saveTrendLines",
+                        type:"POST",
+                        data:{
+                            xAnchor:plot.annotations().getAnnotationAt(annotationsCount - 1).xAnchor()
+                        },
+                        dataType:"json",
+                        success:function(){
+                            alert("Saved!");
+                        }
+                    });
+               }else{
+
+                    // remove the last annotation
+                    plot.annotations().removeAnnotationAt(annotationsCount - 1);
+               }
+               document.getElementById("typeSelect").value = "default";
+            });
+
+
+
+            // load all saved annotations
+
+            var annotations = function(){
+                $.ajax({
+                    url:site_url+"/trend/getTrendLines",
+                    type:"GET",
+                    async:false,
+                    data:{
+                        test:"Hallo"
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        //console.log(data);
+                        chart.plot().annotations().fromJson(data);
+                    }
+                });
+            };
+
+            annotations();
+
             // create range picker
             var rangePicker = anychart.ui.rangePicker();
             // init range picker
@@ -84,22 +116,9 @@ anychart.onDocumentReady(function() {
             var rangeSelector = anychart.ui.rangeSelector();
             // init range selector
             rangeSelector.render(chart);
-            //});
+
+            });
         }
     });
   });
 
-// $(function(){
-//     $.ajax({
-//         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-//         url:site_url+"/trend/getJsonData",
-//         type:"POST",
-//         data:{
-//             test:"Hallo"
-//         },
-//         dataType:"json",
-//         success:function(){
-//             alert("hallo");
-//         }
-//     });
-// });

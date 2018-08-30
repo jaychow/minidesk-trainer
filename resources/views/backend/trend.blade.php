@@ -15,10 +15,17 @@
       <div class="col-xs-12">
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">Hover Data Table</h3>
+            <h3 class="box-title">Candle Stick Chart</h3>
           </div>
           <!-- /.box-header -->
           <div class="box-body">
+                <select id="typeSelect">
+                    <option value="default" selected disabled>Annotation Type</option>
+                    <option value="vertical-line">Vertical Line</option>
+                </select>
+                <button id="cancel">Cancel</button>
+                <button id="clearSel">Clear Selection</button>
+                <button id="removeSel">Remove Selected</button>
             <div id="candlestickchart"></div>
           </div>
           <!-- /.box-body -->

@@ -96,6 +96,7 @@
 <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-exports.min.js"></script>
 <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-stock.min.js"></script>
 <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-data-adapter.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-annotations.min.js"></script>
 @if (isset($js))
 <script src="{{ asset('app/'.$js.'.js') }}"></script>
 @endif

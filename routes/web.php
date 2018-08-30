@@ -25,23 +25,31 @@ Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logou
         Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
         Route::post('/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
         Route::get('/logout', 'Auth\AdminLoginController@logout')->name('admin.logout');
+        Route::post('/getDetailsById', 'AdminController@getDetailsById')->name('admin.getdetailbyid');
         Route::get('/', 'AdminController@index')->name('admin.dashboard');
     });
 
     Route::prefix('admin-crud')->group(function(){
-        Route::get('/', 'AdminCrudController@index')->name('admin-crud');
         Route::post('/anyData','AdminCrudController@anyData');
+        Route::post('/add','AdminCrudController@add')->name('admin-crud.add');
+        Route::post('/update','AdminCrudController@update')->name('admin-crud.update');
+        Route::post('/delete','AdminCrudController@delete')->name('admin-crud.delete');
+        Route::get('/', 'AdminCrudController@index')->name('admin-crud');
     });
 
     Route::prefix('data-import')->group(function(){
-        Route::get('/', 'DataImportController@index')->name('data-import');
         Route::post('/import-file', 'DataImportController@importFile')->name('data-import.import-file');
         Route::get('/anyData','DataImportController@anyData');
+        Route::get('/', 'DataImportController@index')->name('data-import');
     });
 
     Route::prefix('trend')->group(function(){
-        Route::get('/', 'TrendController@index')->name('trend');
         Route::post('/getJsonData', 'TrendController@getJsonData')->name('data-import.get-json-data');
+        Route::get('/getTrendLines', 'TrendController@getTrendLines')->name('data-import.get-trend-line');
+        Route::post('/saveTrendLines', 'TrendController@saveTrendLines')->name('data-import.save-trend-line');
+        Route::post('/removeTrendLines', 'TrendController@removeTrendLines')->name('data-import.remove-trend-line');
+        Route::post('/saveToJsonFile', 'TrendController@saveToJsonFile')->name('data-import.save-json-file');
+        Route::get('/', 'TrendController@index')->name('trend');
     });
 
 
