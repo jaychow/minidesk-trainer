@@ -1,1 +1,1 @@
-# minidesk-trainer
+# trading-new
