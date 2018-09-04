@@ -24,7 +24,15 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('backend.home', ['js' => 'dashboard', 'menu' => 'Dashboard']);
+        $result = DB::table('currency')->select('id_currency', 'currency_name')->get();
+        $data = array();
+        foreach($result as $item){
+            $row = array();
+            $row['id'] = $item->id_currency;
+            $row['item'] = $item->currency_name;
+            $data[] = $row;
+        }
+        return view('backend.home', ['js' => 'dashboard', 'menu' => 'Dashboard' , 'select2' => $data]);
     }
 
     function getDetailsById(Request $request){

@@ -1,0 +1,22 @@
+HistData.com (c) 2012
+File: DAT_XLSX_EURJPY_M1_201808.csv Status Report
+
+Gap of 67s found between 20180801181316 and 20180801181429.
+Gap of 61s found between 20180801182908 and 20180801183016.
+Gap of 114s found between 20180805173829 and 20180805174029.
+Gap of 64s found between 20180805174331 and 20180805174441.
+Gap of 71s found between 20180805175632 and 20180805175749.
+Gap of 66s found between 20180805181555 and 20180805181707.
+Gap of 73s found between 20180805183812 and 20180805183931.
+Gap of 64s found between 20180805184820 and 20180805184930.
+Gap of 81s found between 20180807163550 and 20180807163717.
+Gap of 80s found between 20180807172417 and 20180807172544.
+Gap of 129s found between 20180807181952 and 20180807182208.
+Gap of 64s found between 20180808182724 and 20180808182835.
+Gap of 61s found between 20180809172509 and 20180809172616.
+Gap of 62s found between 20180814170244 and 20180814170352.
+Gap of 74s found between 20180815183841 and 20180815184001.
+Gap of 61s found between 20180816190505 and 20180816190612.
+
+Average tick interval: 5198 miliseconds.
+Maximum tick interval found: 129250 miliseconds.

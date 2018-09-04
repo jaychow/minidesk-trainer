@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\TradeData as TradeData;
 use DB;
 
 class HomeController extends Controller
@@ -24,30 +25,29 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', ['js' => 'user-home']);
-    }
-
-    public function getJsonData(){
-        $result = DB::table('trade_data')->select('trade_date', 'open_bid', 'high_bid', 'low_bid', 'close_bid')->limit(1000)->get();
+        $result = DB::table('currency')->select('id_currency', 'currency_name')->get();
         $data = array();
         foreach($result as $item){
-            $time = strtotime($item->trade_date);
-            $utc_time = mktime( date("H", $time),
-                                date("i", $time),
-                                0,
-                                date("d", $time),
-                                date("m", $time),
-                                date("Y", $time)
-                        );
-            $row = array($utc_time*1000,
-                         $item->open_bid,
-                         $item->high_bid,
-                         $item->low_bid,
-                         $item->close_bid
-                        );
+            $row = array();
+            $row['id'] = $item->id_currency;
+            $row['item'] = $item->currency_name;
             $data[] = $row;
         }
-        return response()->json($data);
+        return view('home', ['js' => 'user-home', 'select2' => $data]);
+    }
+
+    public function getChartData(Request $request){
+
+        $response = TradeData::getChartData($request);
+        return response()->json($response);
+
+    }
+
+    function getTrendLines(Request $request){
+
+        $data = TradeData::getTrendLines($request);
+        return response()->json(json_encode(array("annotationsList"=>$data)));
+
     }
 
 }

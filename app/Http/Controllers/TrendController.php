@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\TradeData as TradeData;
 
 class TrendController extends Controller
 {
@@ -24,7 +25,15 @@ class TrendController extends Controller
      */
     public function index()
     {
-        return view('backend.trend', ['js' => 'trend', 'menu' => 'Trend']);
+        $result = DB::table('currency')->select('id_currency', 'currency_name')->get();
+        $data = array();
+        foreach($result as $item){
+            $row = array();
+            $row['id'] = $item->id_currency;
+            $row['item'] = $item->currency_name;
+            $data[] = $row;
+        }
+        return view('backend.trend', ['js' => 'trend', 'menu' => 'Trend', 'select2' => $data]);
     }
 
     public function getJsonData(){
@@ -51,68 +60,73 @@ class TrendController extends Controller
     }
 
     function saveTrendLines(Request $request){
-        $arr[] = ['id_currency' => 1,
-                  'xAnchor' => $request->input('xAnchor')
+        $arr[] = ['id_currency' => $request->input('id_currency'),
+                  'enabled' => $request->input('enabled'),
+                  'type' => $request->input('type'),
+                  'color' => $request->input('color'),
+                  'xAnchor' => $request->input('xAnchor'),
+                  'secondXAnchor' => $request->input('secondXAnchor'),
+                  'valueAnchor' => $request->input('valueAnchor'),
+                  'secondValueAnchor' => $request->input('secondValueAnchor'),
         ];
-        DB::table('trend_markers')->insert($arr);
-        return response()->json(json_encode(array('staus'=>true)));
+        $status = DB::table('zones')->insert($arr);
+        return response()->json(array('status'=>$status));
     }
 
     function removeTrendLines(Request $request){
-        DB::table('trend_markers')->where('id_currency', '=', 1)->where('xAnchor', '=', $request->input('xAnchor'))->delete();
-        return response()->json(json_encode(array('staus'=>true)));
+        DB::table('zones')->where('id_currency', $request->input('id_currency'))
+           ->where('color', $request->input('color'))
+           ->where('xAnchor', $request->input('xAnchor'))
+           ->where('secondXAnchor', $request->input('secondXAnchor'))
+           ->delete();
+        return response()->json(json_encode(array('status'=>true)));
     }
 
-    function getTrendLines(){
-        $param = array( "enabled"=>true,
-                        "type"=>"vertical-line",
-                        "color"=>"#e06666",
-                        "allowEdit"=>true,
-                        "hoverGap"=>5,
-                        "normal"=>array("markers"=>array(   "enabled"=>false,
-                                                            "anchor"=>"center",
-                                                            "offsetX"=>0,
-                                                            "offsetY"=>0,
-                                                            "type"=>"square",
-                                                            "rotation"=>0,
-                                                            "size"=>10,
-                                                            "fill"=>"#ffff66",
-                                                            "stroke"=>"#333333"
-                                                    )
-                                        ),
-                        "hovered"=>array("markers"=>array("enabled"=>null)),
-                        "selected"=>array("markers"=>array("enabled"=>true))
-                        ,"xAnchor"=>0
-                    );
-        $data = array();
-        $result = DB::table('trend_markers')->where("id_currency", 1)->get();
-        foreach($result as $item){
-            $row = $param;
-            $row['xAnchor'] = $item->xAnchor;
-            $data[] = $row;
-        }
+    function getTrendLines(Request $request){
+
+        $data = TradeData::getTrendLines($request);
         return response()->json(json_encode(array("annotationsList"=>$data)));
+        // $param = array( "enabled"=>true,
+        //                 "type"=>"vertical-line",
+        //                 "color"=>"#e06666",
+        //                 "allowEdit"=>true,
+        //                 "hoverGap"=>5,
+        //                 "normal"=>array("markers"=>array(   "enabled"=>false,
+        //                                                     "anchor"=>"center",
+        //                                                     "offsetX"=>0,
+        //                                                     "offsetY"=>0,
+        //                                                     "type"=>"square",
+        //                                                     "rotation"=>0,
+        //                                                     "size"=>10,
+        //                                                     "fill"=>"#ffff66",
+        //                                                     "stroke"=>"#333333"
+        //                                             )
+        //                                 ),
+        //                 "hovered"=>array("markers"=>array("enabled"=>null)),
+        //                 "selected"=>array("markers"=>array("enabled"=>true))
+        //                 ,"xAnchor"=>0
+        //             );
+
     }
 
-    public function saveToJsonFile(){
-        $result = DB::table('trade_data')->select('trade_date', 'open_bid', 'high_bid', 'low_bid', 'close_bid')->get();
+    public function saveToJsonFile(Request $request){
+
+        $response = TradeData::getChartData($request);
+        return response()->json($response);
+
+    }
+
+    public function getCurrency(){
+        $result = DB::table('currency')->select('id_currency', 'currency_name')->get();
         $data = array();
         foreach($result as $item){
-            $time = strtotime($item->trade_date);
-            $row = array(date("U", $time)*1000,
-                         $item->open_bid,
-                         $item->high_bid,
-                         $item->low_bid,
-                         $item->close_bid
-                    );
+            $row = array();
+            $row['id'] = $item->id_currency;
+            $row['item'] = $item->currency_name;
             $data[] = $row;
         }
 
-        $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
-
-        file_put_contents(base_path('public/files/tradingData.json'), stripslashes($newJsonString));
-
-        return response()->json(array('status' => true));
+        return response()->json($data);
     }
 
 
