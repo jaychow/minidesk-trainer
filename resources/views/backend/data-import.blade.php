@@ -1,77 +1,72 @@
 @extends('layouts.backend')
 
-<!-- Main content -->
 @section('content')
-<section class="content">
-    <div class="row">
-    <!-- left column -->
-    <div class="col-md-12">
-        <!-- general form elements -->
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Import Data</h3>
-            </div>
-            <!-- /.box-header -->
-            <!-- form start -->
-        <form class="form-horizontal" method="POST" action="{{ route('data-import.import-file') }}" enctype="multipart/form-data">
-            <div class="box-body">
-                <div class="form-group">
-                <label for="currency" class="col-sm-2 control-label">Currency</label>
-
-                <div class="col-sm-4">
-                    <input type="text" class="form-control" id="currency" name="currency" placeholder="Choose Currency">
-                </div>
-                </div>
-                <div class="form-group">
-                    <label for="sample_file" class="col-sm-2 control-label">Input File</label>
-                    <div class="col-sm-4">
-                        <input class="form-control" type="file" id="sample_file" name="sample_file">
-                        <p class="help-block">Select excel file.</p>
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- basic table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Exchange Data</h4>
+                                <button id="openBtn" class="btn btn-primary mb-2"><i class="far fa-file-excel"></i>&nbsp; Import</button>
+                                <div class="table-responsive">
+                                    <table id="table" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Open Bid</th>
+                                                <th>High Bid</th>
+                                                <th>Low Bid</th>
+                                                <th>Close Bid</th>
+                                                <th>Volume</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                @csrf
             </div>
-            <!-- /.box-body -->
-            <div class="box-footer">
-                <button type="reset" class="btn btn-default">Cancel</button>
-                <button type="submit" class="btn btn-info pull-right">Import</button>
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- sample modal content -->
+            <div class="modal fade" id="input-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Choose File</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- form start -->
+                            <form role="form" id="form">
+                                <div class="box-body">
+                                <div class="form-group">
+                                    <label for="name">Currency Name</label>
+                                    <input type="text" class="form-control" name="currency_name" placeholder="Enter currency name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="sample_file">File Input</label>
+                                    <input type="file" name="sample_file" class="form-control">
+                                </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="closeBtn" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+                            <button type="button" id="importBtn" class="btn btn-success waves-effect text-left" >Import</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
             </div>
-            <!-- /.box-footer -->
-        </form>
-        </div>
-        <!-- /.box -->
-    </div>
-    <!--/.col (left) -->
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="box">
-          <div class="box-header">
-            <h3 class="box-title">Hover Data Table</h3>
-          </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <table id="table" class="table table-bordered table-hover">
-              <thead>
-              <tr>
-                <th>Date</th>
-                <th>Open Bid</th>
-                <th>High Bid</th>
-                <th>Low Bid</th>
-                <th>Close Bid</th>
-              </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.box-body -->
-        </div>
-        <!-- /.box -->
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
-  </section>
-  <!-- /.content -->
-  @endsection
+            <!-- /.modal -->
+@endsection

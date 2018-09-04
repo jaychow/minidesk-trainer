@@ -1,162 +1,207 @@
-anychart.onDocumentReady(function() {
-    // The data used in this sample can be obtained from the CDN
-    // https://cdn.anychart.com/csv-data/csco-daily.csv
-    $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url:site_url+"/trend/saveToJsonFile",
-        type:"POST",
-        data:{
-            test:"Hallo"
-        },
-        dataType:"json",
-        success:function(response){
-            anychart.data.loadJsonFile(site_url+'/files/tradingData.json', function(data) {
-            // create data table on loaded data
-            var dataTable = anychart.data.table();
-            dataTable.addData(data);
+var drag;
 
-            // map loaded data for the ohlc series
-            var mapping = dataTable.mapAs({
-                'open': 1,
-                'high': 2,
-                'low': 3,
-                'close': 4
-            });
+anychart.onDocumentReady(function(){
 
-            // map loaded data for the scroller
-            var scrollerMapping = dataTable.mapAs();
-            scrollerMapping.addField('value', 5);
+    $("#id_currency").select2();
 
-            // create stock chart
-            var chart = anychart.stock();
+    var generateChart = function(id_currency, currency){
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url:site_url+"/trend/saveToJsonFile",
+            type:"POST",
+            data:{
+                id_currency: id_currency,
+                currency: currency,
+            },
+            dataType:"json",
+            success:function(response){
+                anychart.data.loadJsonFile(site_url+'/files/'+response.filename, function(data) {
+                // create data table on loaded data
+                var dataTable = anychart.data.table();
+                dataTable.addData(data);
 
-            console.log(chart);
+                // map loaded data for the ohlc series
+                var mapping = dataTable.mapAs({
+                    'open': 1,
+                    'high': 2,
+                    'low': 3,
+                    'close': 4
+                });
 
-            // create first plot on the chart
-            var plot = chart.plot(0);
-            // set grid settings
-            plot.yGrid(true)
-                .xGrid(true)
-                .yMinorGrid(true)
-                .xMinorGrid(true);
+                // map loaded data for the scroller
+                var scrollerMapping = dataTable.mapAs();
+                scrollerMapping.addField('value', 5);
 
-            // create EMA indicators with period 50
-            plot.ema(dataTable.mapAs({
-                'value': 4
-            })).series().stroke('1.5 #455a64');
+                // create stock chart
+                var chart = anychart.stock();
+                chart.title(response.title);
 
-            var series = plot.candlestick(mapping);
-            series.name('EURAUD');
-            series.legendItem().iconType('rising-falling');
+                // create first plot on the chart
+                var plot = chart.plot(0);
+                // set grid settings
+                plot.yGrid(true)
+                    .xGrid(true)
+                    .yMinorGrid(true)
+                    .xMinorGrid(true);
 
-            // create scroller series with mapped data
-            chart.scroller().candlestick(mapping);
+                // create EMA indicators with period 50
+                plot.ema(dataTable.mapAs({
+                    'value': 4
+                })).series().stroke('1.5 #455a64');
 
-            // set chart selected date/time range
-            chart.selectRange('2018-08-01 00:00:00', '2018-08-17 16:58:00');
+                var series = plot.candlestick(mapping);
+                series.name(currency);
+                series.legendItem().iconType('rising-falling');
 
-            // set container id for the chart
-            chart.container('candlestickchart');
-            // initiate chart drawing
-            chart.draw();
 
-            // reset the select list to the first option
-            chart.listen("annotationDrawingFinish", function(){
-               // get the number of annotations
-               var annotationsCount = plot.annotations().getAnnotationsCount();
-               if(confirm("Do you want to save this marker?") == true){
-                    $.ajax({
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url:site_url+"/trend/saveTrendLines",
-                        type:"POST",
-                        data:{
-                            xAnchor:plot.annotations().getAnnotationAt(annotationsCount - 1).xAnchor()
-                        },
-                        dataType:"json",
-                        success:function(response){
-                            alert("Saved!");
-                        }
-                    });
-               }else{
+                // create scroller series with mapped data
+                chart.scroller().candlestick(mapping);
 
-                    // remove the last annotation
-                    plot.annotations().removeAnnotationAt(annotationsCount - 1);
-               }
-               document.getElementById("typeSelect").value = "default";
-            });
+                // set chart selected date/time range
+                chart.selectRange(response.minDate, response.maxDate);
 
-            // load all saved annotations
+                $('#candlestickchart').html("");
+                // set container id for the chart
+                chart.container('candlestickchart');
+                // initiate chart drawing
+                chart.draw();
 
-            var annotations = function(){
-                $.ajax({
-                    url:site_url+"/trend/getTrendLines",
-                    type:"GET",
-                    data:{
-                        test:"Hallo"
-                    },
-                    dataType:"json",
-                    success:function(data){
-                        //console.log(data);
-                        chart.plot().annotations().fromJson(data);
+                chart.listen("annotationChangeFinish", function(){
+
+                    if(drag == true){
+                        drag == false
+                        alert("Drag finished");
                     }
                 });
-            };
 
-            annotations();
+                chart.listen("annotationChange", function(){
+                    if(drag == false){
+                        drag == true;
+                    }
+                });
 
-            // create range picker
-            var rangePicker = anychart.ui.rangePicker();
-            // init range picker
-            rangePicker.render(chart);
+                // reset the select list to the first option
+                chart.listen("annotationDrawingFinish", function(){
+                    // get the number of annotations
+                    var annotationsCount = plot.annotations().getAnnotationsCount();
+                    var newAnn = plot.annotations().getAnnotationAt(annotationsCount - 1);
 
-            // create range selector
-            var rangeSelector = anychart.ui.rangeSelector();
-            // init range selector
-            rangeSelector.render(chart);
+                    if(confirm("Do you want to save this marker?") == true){
+                        $.ajax({
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            url:site_url+"/trend/saveTrendLines",
+                            type:"POST",
+                            data:{
+                                enabled:newAnn.enabled(),
+                                type:newAnn.getType(),
+                                color:newAnn.color(),
+                                xAnchor:newAnn.xAnchor(),
+                                secondXAnchor:newAnn.secondXAnchor(),
+                                valueAnchor:newAnn.valueAnchor(),
+                                secondValueAnchor:newAnn.secondValueAnchor(),
+                                id_currency:$("#id_currency").val()
+                            },
+                            dataType:"json",
+                            success:function(response){
+                                alert("Saved!");
+                            }
+                        });
+                    }else{
 
-            // create annotations
-            $("#typeSelect").change(function(){
-                plot.annotations().startDrawing(this.value);
-            });
+                        // remove the last annotation
+                        plot.annotations().removeAnnotationAt(annotationsCount - 1);
+                    }
+                    document.getElementById("typeSelect").value = "default";
+                });
 
-            // remove all annotations
-            // $("#removeAll").click(function(){
-            //     plot.annotations().removeAllAnnotations();
-            // });
+                // load all saved annotations
 
-            // cancel drawing
-            $("#cancel").click(function(){
-                plot.annotations().cancelDrawing();
-                document.getElementById("typeSelect").value = "default";
-            });
-
-            // cancel drawing
-            $("#clearSel").click(function(){
-                plot.annotations().unselect();
-            });
-
-            //remove selected
-            $("#removeSel").click(function(){
-                if(confirm("Do you want to delete this marker?") == true){
+                var annotations = function(){
                     $.ajax({
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url:site_url+"/trend/removeTrendLines",
-                        type:"POST",
+                        url:site_url+"/trend/getTrendLines",
+                        type:"GET",
                         data:{
-                            xAnchor:plot.annotations().getSelectedAnnotation().xAnchor()
+                            id_currency:$("#id_currency").val()
                         },
                         dataType:"json",
-                        success:function(response){
-                            var selectedAnnotation = plot.annotations().getSelectedAnnotation();
-                            // remove the selected annotation
-                            plot.annotations().removeAnnotation(selectedAnnotation);
-                            alert("Removed!");
+                        success:function(data){
+                            //console.log(data);
+                            chart.plot().annotations().fromJson(data);
                         }
                     });
-                }
-            });
+                };
 
-            });
-        }
+                annotations();
+
+                // create range picker
+                var rangePicker = anychart.ui.rangePicker();
+                // init range picker
+                rangePicker.render(chart);
+
+                // create range selector
+                var rangeSelector = anychart.ui.rangeSelector();
+                // init range selector
+                rangeSelector.render(chart);
+
+                // create annotations
+                $("#typeSelect").change(function(){
+                    //plot.annotations().startDrawing(this.value);
+                    if(this.value == "bz-rectangle"){
+                        plot.annotations().startDrawing({type: "rectangle", color: "cadetblue"});
+                    }else{
+                        plot.annotations().startDrawing({type: "rectangle", color: "red"});
+                    }
+
+                });
+
+                // cancel drawing
+                $("#cancel").click(function(){
+                    plot.annotations().cancelDrawing();
+                    document.getElementById("typeSelect").value = "default";
+                });
+
+                // cancel drawing
+                $("#clearSel").click(function(){
+                    plot.annotations().unselect();
+                });
+
+                //remove selected
+                $("#removeSel").click(function(){
+                    var sel = plot.annotations().getSelectedAnnotation();
+                        console.log(sel);
+                    if(confirm("Do you want to delete this marker?") == true){
+                        var sel = plot.annotations().getSelectedAnnotation();
+                        console.log(sel);
+                        $.ajax({
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            url:site_url+"/trend/removeTrendLines",
+                            type:"POST",
+                            data:{
+                                color:newAnn.color(),
+                                xAnchor:newAnn.xAnchor(),
+                                secondXAnchor:newAnn.secondXAnchor(),
+                                id_currency:$("#id_currency").val()
+                            },
+                            dataType:"json",
+                            success:function(response){
+                                var selectedAnnotation = plot.annotations().getSelectedAnnotation();
+                                // remove the selected annotation
+                                plot.annotations().removeAnnotation(selectedAnnotation);
+                                alert("Removed!");
+                            }
+                        });
+                    }
+                });
+
+                });
+            }
+        });
+    }
+
+    generateChart("", "");
+
+    $('#id_currency').change(function(){
+        generateChart(this.value, $(this).find('option:selected').text());
     });
-  });
+
+});

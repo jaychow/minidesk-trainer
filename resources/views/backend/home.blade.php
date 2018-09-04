@@ -1,98 +1,138 @@
 @extends('layouts.backend')
+@section('content')
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Info box -->
+                <!-- ============================================================== -->
+                <div class="card-group">
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            @if (session('status'))
+                                <div class="alert alert-success" role="alert">
+                                    {{ session('status') }}
+                                </div>
+                            @endif
+                            <div class="d-flex align-items-center">
+                                <div class="m-r-10">
+                                    <a href="{{ route('manage-admin') }}" class="btn btn-circle btn-lg bg-danger">
+                                        <i class="icon-People-onCloud text-white"></i>
+                                    </a>
+                                </div>
+                                <div>
+                                    Manage Admin
+                                </div>
+                                <div class="ml-auto">
+                                    <h2 class="m-b-0 font-light"></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="m-r-10">
+                                    <a href="{{ route('data-import') }}" class="btn btn-circle btn-lg btn-info">
+                                        <i class="icon-File-Excel text-white"></i>
+                                    </a>
+                                </div>
+                                <div>
+                                    Import Data
+                                </div>
+                                <div class="ml-auto">
+                                    <h2 class="m-b-0 font-light"></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="m-r-10">
+                                    <a href="{{ route('trend') }}" class="btn btn-circle btn-lg bg-success">
+                                        <i class="icon-Bar-Chart5 text-white"></i>
+                                    </a>
+                                </div>
+                                <div>
+                                    Trend
+                                </div>
+                                <div class="ml-auto">
+                                    <h2 class="m-b-0 font-light"></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <!-- Card -->
+                    <div class="card card-hover">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="m-r-10">
+                                    <a href="{{ route('manage-admin') }}" class="btn btn-circle btn-lg bg-warning">
+                                        <i class="icon-Gears text-white"></i>
+                                    </a>
+                                </div>
+                                <div>
+                                    Settings
+                                </div>
+                                <div class="ml-auto">
+                                    <h2 class="m-b-0 font-light"></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <!-- Column -->
 
 
- <!-- Main content -->
- @section('content')
- <style>
-#candlestickchart {
-    width: 100%;
-    height: 600px;
-    margin: 0;
-    padding: 0;
-}
-</style>
- <section class="content">
-    <!-- Small boxes (Stat box) -->
-    <div class="row">
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-aqua">
-            <div class="inner">
-                <h3>{{ __('Admin') }}</h3>
+                </div>
+                <!-- ============================================================== -->
+                <!-- Info box -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Email campaign chart -->
+                <!-- ============================================================== -->
+                <div class="row">
+                    <!-- Column -->
+                    <div class="col-md-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <h4 class="card-title">Candle Stick Chart</h4>
+                                        <h5 class="card-subtitle">Money Exchange</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    <select class="select2 form-control custom-select" style="width: 200px; height:36px;" id="id_currency">
+                                            <option value="default" selected disabled>Select Currency</option>
+                                        @if (isset($select2))
+                                            $@foreach ($select2 as $option)
+                                            <option value="{{ $option['id'] }}">{{ $option['item'] }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    </div>
+                                </div>
+                                <div id="candlestickchart" style="height: 600px"></div>
+                            </div>
+                        </div>
 
-                <p>User CRUD</p>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- Email campaign chart -->
+                <!-- ============================================================== -->
             </div>
-            <div class="icon">
-                <i class="ion ion-person"></i>
-            </div>
-            <a href="{{ route('admin-crud') }}" class="small-box-footer">Enter <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-green">
-            <div class="inner">
-                <h3>{{ __('Data') }}</h3>
-
-                <p>Import Data</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="{{ route('data-import') }}" class="small-box-footer">Enter <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-            <div class="inner">
-                <h3>{{ __('Trend') }}</h3>
-
-                <p>Add Trend Line</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-arrow-graph-up-right"></i>
-            </div>
-            <a href="{{ route('trend') }}" class="small-box-footer">Enter <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-red">
-            <div class="inner">
-                <h3>{{ __('Settings') }}</h3>
-
-                <p>Settings</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-android-settings"></i>
-            </div>
-            <a href="{{ route('admin-crud') }}" class="small-box-footer">Enter <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-    </div>
-    <!-- /.row -->
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-            <div class="box-header">
-                <h3 class="box-title">Candle Stick Chart</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <div id="candlestickchart"></div>
-            </div>
-            <!-- /.box-body -->
-            </div>
-            <!-- /.box -->
-        </div>
-        <!-- /.col -->
-    </div>
-    <!-- /.row -->
-  </section>
-  <!-- /.content -->
-  @endsection
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+@endsection

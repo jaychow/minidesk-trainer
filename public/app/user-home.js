@@ -1,105 +1,111 @@
-anychart.onDocumentReady(function() {
-    // The data used in this sample can be obtained from the CDN
-    // https://cdn.anychart.com/csv-data/csco-daily.csv
-    //anychart.data.loadCsvFile('https://cdn.anychart.com/csv-data/csco-daily.csv', function(data) {
-      // create data table on loaded data
-    //   var data = []
-    //   var year = 2017;
-    //   var month = 7;
-    //   var day = 23;
-    //   var hour = 0;
-    //   var minute = 0;
-    //   for(let i = 1; i <= 46; i++){
-    //     if(i%23 == 0){
-    //         hour = 0;
-    //         day++;
-    //     }
-    //     var item = [Date.UTC(year, month, day, hour, minute), 23.00, 23.50, 23.25, 23.40]
-    //     data.push(item);
-    //     hour++;
-    //   }
+var drag;
 
-    $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url:site_url+"/home/getJsonData",
-        type:"POST",
-        data:{
-            test:"Hallo"
-        },
-        dataType:"json",
-        success:function(data){
+anychart.onDocumentReady(function(){
 
-            var dataTable = anychart.data.table();
-            dataTable.addData(data);
+    $("#id_currency").select2();
 
-            // map loaded data for the ohlc series
-            var mapping = dataTable.mapAs({
-                'open': 1,
-                'high': 2,
-                'low': 3,
-                'close': 4
-            });
 
-            // map loaded data for the scroller
-            var scrollerMapping = dataTable.mapAs();
-            scrollerMapping.addField('value', 5);
+    var generateChart = function(id_currency, currency){
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url:site_url+"/home/getChartData",
+            type:"POST",
+            data:{
+                id_currency: id_currency,
+                currency: currency,
+            },
+            dataType:"json",
+            success:function(response){
+                anychart.data.loadJsonFile(site_url+'/files/'+response.filename, function(data) {
+                // create data table on loaded data
+                var dataTable = anychart.data.table();
+                dataTable.addData(data);
 
-            // create stock chart
-            var chart = anychart.stock();
+                // map loaded data for the ohlc series
+                var mapping = dataTable.mapAs({
+                    'open': 1,
+                    'high': 2,
+                    'low': 3,
+                    'close': 4
+                });
 
-            // create first plot on the chart
-            var plot = chart.plot(0);
-            // set grid settings
-            plot.yGrid(true)
-                .xGrid(true)
-                .yMinorGrid(true)
-                .xMinorGrid(true);
+                // map loaded data for the scroller
+                var scrollerMapping = dataTable.mapAs();
+                scrollerMapping.addField('value', 5);
 
-            // create EMA indicators with period 50
-            plot.ema(dataTable.mapAs({
-                'value': 4
-            })).series().stroke('1.5 #455a64');
+                // create stock chart
+                var chart = anychart.stock();
+                chart.title(response.title);
 
-            var series = plot.candlestick(mapping);
-            series.name('EURAUD');
-            series.legendItem().iconType('rising-falling');
+                // create first plot on the chart
+                var plot = chart.plot(0);
+                // set grid settings
+                plot.yGrid(true)
+                    .xGrid(true)
+                    .yMinorGrid(true)
+                    .xMinorGrid(true);
 
-            // create scroller series with mapped data
-            chart.scroller().candlestick(mapping);
+                // create EMA indicators with period 50
+                plot.ema(dataTable.mapAs({
+                    'value': 4
+                })).series().stroke('1.5 #455a64');
 
-            // set chart selected date/time range
-            chart.selectRange('2018-08-01 00:00', '2018-08-17 16:58:00');
+                var series = plot.candlestick(mapping);
+                series.name(currency);
+                series.legendItem().iconType('rising-falling');
 
-            // set container id for the chart
-            chart.container('candlestickchart');
-            // initiate chart drawing
-            chart.draw();
 
-            // create range picker
-            var rangePicker = anychart.ui.rangePicker();
-            // init range picker
-            rangePicker.render(chart);
+                // create scroller series with mapped data
+                chart.scroller().candlestick(mapping);
 
-            // create range selector
-            var rangeSelector = anychart.ui.rangeSelector();
-            // init range selector
-            rangeSelector.render(chart);
-            //});
-        }
+                // set chart selected date/time range
+                chart.selectRange(response.minDate, response.maxDate);
+
+                $('#candlestickchart').html("");
+                // set container id for the chart
+                chart.container('candlestickchart');
+                // initiate chart drawing
+                chart.draw();
+
+                // load all saved annotations
+
+                var annotations = function(){
+                    $.ajax({
+                        url:site_url+"/home/getTrendLines",
+                        type:"GET",
+                        data:{
+                            id_currency:$("#id_currency").val()
+                        },
+                        dataType:"json",
+                        success:function(data){
+                            //console.log(data);
+                            chart.plot().annotations().fromJson(data);
+                        }
+                    });
+                };
+
+                annotations();
+
+                // create range picker
+                var rangePicker = anychart.ui.rangePicker();
+                // init range picker
+                rangePicker.render(chart);
+
+                // create range selector
+                var rangeSelector = anychart.ui.rangeSelector();
+                // init range selector
+                rangeSelector.render(chart);
+
+
+                });
+            }
+        });
+    }
+
+    generateChart("", "");
+
+    $('#id_currency').change(function(){
+        generateChart(this.value, $(this).find('option:selected').text());
     });
-  });
 
-// $(function(){
-//     $.ajax({
-//         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-//         url:site_url+"/trend/getJsonData",
-//         type:"POST",
-//         data:{
-//             test:"Hallo"
-//         },
-//         dataType:"json",
-//         success:function(){
-//             alert("hallo");
-//         }
-//     });
-// });
+});

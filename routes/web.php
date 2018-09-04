@@ -12,13 +12,32 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    if(Auth::guard('web')->check()){
+        return redirect('home');
+    }elseif(Auth::guard('admin')->check()){
+        return redirect('admin');
+    }else{
+        $result = DB::table('currency')->select('id_currency', 'currency_name')->get();
+        $data = array();
+        foreach($result as $item){
+            $row = array();
+            $row['id'] = $item->id_currency;
+            $row['item'] = $item->currency_name;
+            $data[] = $row;
+        }
+        return view('welcome', ['js' => "root", 'select2' => $data]);
+    }
+})->name('root');
 
 Auth::routes();
 
+Route::post('/chart-data/getChartData', 'ChartDataController@getChartData')->name('chart-data.get-chart-data');
+Route::get('/chart-data/getTrendLines', 'ChartDataController@getTrendLines')->name('chart-data.get-trend-line');
+
+Route::post('home/getChartData', 'HomeController@getChartData')->name('home.get-chart-data');
+Route::get('home/getTrendLines', 'HomeController@getTrendLines')->name('home.get-trend-line');
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('home/getJsonData', 'HomeController@getJsonData')->name('home.get-json-data');
+
 Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logout');
 
     Route::prefix('admin')->group(function(){
@@ -29,17 +48,19 @@ Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logou
         Route::get('/', 'AdminController@index')->name('admin.dashboard');
     });
 
-    Route::prefix('admin-crud')->group(function(){
+    Route::prefix('manage-admin')->group(function(){
         Route::post('/anyData','AdminCrudController@anyData');
-        Route::post('/add','AdminCrudController@add')->name('admin-crud.add');
-        Route::post('/update','AdminCrudController@update')->name('admin-crud.update');
-        Route::post('/delete','AdminCrudController@delete')->name('admin-crud.delete');
-        Route::get('/', 'AdminCrudController@index')->name('admin-crud');
+        Route::post('/add','AdminCrudController@add')->name('manage-admin.add');
+        Route::post('/update','AdminCrudController@update')->name('manage-admin.update');
+        Route::post('/delete','AdminCrudController@delete')->name('manage-admin.delete');
+        Route::post('/checkEmail','AdminCrudController@checkEmail')->name('manage-admin.checkEmail');
+        Route::post('/resetPassword','AdminCrudController@resetPassword')->name('manage-admin.resetPassword');
+        Route::get('/', 'AdminCrudController@index')->name('manage-admin');
     });
 
     Route::prefix('data-import')->group(function(){
         Route::post('/import-file', 'DataImportController@importFile')->name('data-import.import-file');
-        Route::get('/anyData','DataImportController@anyData');
+        Route::post('/anyData','DataImportController@anyData');
         Route::get('/', 'DataImportController@index')->name('data-import');
     });
 
@@ -49,6 +70,7 @@ Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logou
         Route::post('/saveTrendLines', 'TrendController@saveTrendLines')->name('data-import.save-trend-line');
         Route::post('/removeTrendLines', 'TrendController@removeTrendLines')->name('data-import.remove-trend-line');
         Route::post('/saveToJsonFile', 'TrendController@saveToJsonFile')->name('data-import.save-json-file');
+        Route::get('/getCurrency', 'TrendController@getCurrency')->name('data-import.get-currency');
         Route::get('/', 'TrendController@index')->name('trend');
     });
 
