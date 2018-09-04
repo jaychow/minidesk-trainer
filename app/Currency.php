@@ -11,7 +11,7 @@ class Currency extends Model
 
     public static function getCurrencyId($currency_name){
         $curr = DB::table('currency')->where('currency_name', $currency_name)->first();
-        if(sizeof($curr) > 0){
+        if($curr != null){
             return $curr->id_currency;
         }else{
             $id = DB::table('currency')->insertGetId(

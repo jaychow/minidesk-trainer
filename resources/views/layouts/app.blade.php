@@ -11,8 +11,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/favicon.png') }}">
-    <title>AdminBite admin Template - The Ultimate Multipurpose admin template</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/earth.png') }}">
+    <title>GlobeStock - Money Exchange</title>
     <!-- Select2 -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/libs/select2/dist/css/select2.min.css') }}">
     <!-- AnyChart -->
@@ -100,6 +100,8 @@
     <!-- Select2 -->
     <script src="{{ asset('assets/libs/select2/dist/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/libs/select2/dist/js/select2.min.js') }}"></script>
+    <!-- Sweet Alert -->
+    <script src="{{ asset('assets/sweetalert/dist/sweetalert.min.js') }}"></script>
     <!-- AnyChart -->
     <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-base.min.js"></script>
     <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-ui.min.js"></script>

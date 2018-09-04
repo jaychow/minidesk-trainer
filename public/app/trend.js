@@ -1,10 +1,22 @@
 var drag;
+var selectedMarker;
+// var chart;
+// var plot;
 
 anychart.onDocumentReady(function(){
 
     $("#id_currency").select2();
 
     var generateChart = function(id_currency, currency){
+        // if(chart != undefined || chart != null){
+        //     console.log('disposed');
+        //     chart.dispose();
+        //     chart = null;
+        //     plot = null;
+        //     $('#candlestickchart').html("");
+        // }
+        var finishedZone = undefined;
+        var editedZone = undefined;
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url:site_url+"/trend/saveToJsonFile",
@@ -15,6 +27,7 @@ anychart.onDocumentReady(function(){
             },
             dataType:"json",
             success:function(response){
+
                 anychart.data.loadJsonFile(site_url+'/files/'+response.filename, function(data) {
                 // create data table on loaded data
                 var dataTable = anychart.data.table();
@@ -66,17 +79,21 @@ anychart.onDocumentReady(function(){
                 // initiate chart drawing
                 chart.draw();
 
-                chart.listen("annotationChangeFinish", function(){
-
-                    if(drag == true){
-                        drag == false
-                        alert("Drag finished");
+                chart.listen("annotationChangeFinish", function(e){
+                    if(finishedZone != undefined){
+                        console.log(finishedZone.xAnchor()+"><"+editedZone.xAnchor())
+                    }else{
+                        console.log("finish undefined");
                     }
                 });
 
-                chart.listen("annotationChange", function(){
-                    if(drag == false){
-                        drag == true;
+                chart.listen("annotationChange", function(e){
+                    finishedZone = e.annotation;
+                });
+
+                chart.listen("annotationSelect", function(e){
+                    if(editedZone == undefined){
+                        editedZone = e.annotation;
                     }
                 });
 
@@ -86,31 +103,39 @@ anychart.onDocumentReady(function(){
                     var annotationsCount = plot.annotations().getAnnotationsCount();
                     var newAnn = plot.annotations().getAnnotationAt(annotationsCount - 1);
 
-                    if(confirm("Do you want to save this marker?") == true){
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url:site_url+"/trend/saveTrendLines",
-                            type:"POST",
-                            data:{
-                                enabled:newAnn.enabled(),
-                                type:newAnn.getType(),
-                                color:newAnn.color(),
-                                xAnchor:newAnn.xAnchor(),
-                                secondXAnchor:newAnn.secondXAnchor(),
-                                valueAnchor:newAnn.valueAnchor(),
-                                secondValueAnchor:newAnn.secondValueAnchor(),
-                                id_currency:$("#id_currency").val()
-                            },
-                            dataType:"json",
-                            success:function(response){
-                                alert("Saved!");
-                            }
-                        });
-                    }else{
+                    swal({
+                        title: "Do you want to save this zone?",
+                        icon: "info",
+                        buttons: true,
+                        dangerMode: false,
+                      })
+                      .then((willDelete) => {
+                        if (willDelete) {
+                            $.ajax({
+                                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                url:site_url+"/trend/saveTrendLines",
+                                type:"POST",
+                                data:{
+                                    enabled:newAnn.enabled(),
+                                    type:newAnn.getType(),
+                                    color:newAnn.color(),
+                                    xAnchor:newAnn.xAnchor(),
+                                    secondXAnchor:newAnn.secondXAnchor(),
+                                    valueAnchor:newAnn.valueAnchor(),
+                                    secondValueAnchor:newAnn.secondValueAnchor(),
+                                    id_currency:$("#id_currency").val()
+                                },
+                                dataType:"json",
+                                success:function(response){
+                                    toastr.success('Zone saved.', 'Success!');
+                                }
+                            });
+                        }else{
+                            // remove the last annotation
+                            plot.annotations().removeAnnotationAt(annotationsCount - 1);
+                        }
+                      });
 
-                        // remove the last annotation
-                        plot.annotations().removeAnnotationAt(annotationsCount - 1);
-                    }
                     document.getElementById("typeSelect").value = "default";
                 });
 
@@ -121,7 +146,7 @@ anychart.onDocumentReady(function(){
                         url:site_url+"/trend/getTrendLines",
                         type:"GET",
                         data:{
-                            id_currency:$("#id_currency").val()
+                            id_currency:id_currency
                         },
                         dataType:"json",
                         success:function(data){
@@ -167,30 +192,37 @@ anychart.onDocumentReady(function(){
 
                 //remove selected
                 $("#removeSel").click(function(){
-                    var sel = plot.annotations().getSelectedAnnotation();
-                        console.log(sel);
-                    if(confirm("Do you want to delete this marker?") == true){
-                        var sel = plot.annotations().getSelectedAnnotation();
-                        console.log(sel);
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url:site_url+"/trend/removeTrendLines",
-                            type:"POST",
-                            data:{
-                                color:newAnn.color(),
-                                xAnchor:newAnn.xAnchor(),
-                                secondXAnchor:newAnn.secondXAnchor(),
-                                id_currency:$("#id_currency").val()
-                            },
-                            dataType:"json",
-                            success:function(response){
-                                var selectedAnnotation = plot.annotations().getSelectedAnnotation();
-                                // remove the selected annotation
-                                plot.annotations().removeAnnotation(selectedAnnotation);
-                                alert("Removed!");
-                            }
-                        });
-                    }
+
+                    swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, you will not be able to recover this marker!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                      })
+                      .then((willDelete) => {
+                        if (willDelete) {
+                            var sa = plot.annotations().getSelectedAnnotation();
+                            $.ajax({
+                                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                url:site_url+"/trend/removeTrendLines",
+                                type:"POST",
+                                data:{
+                                    color:sa.color(),
+                                    xAnchor:sa.xAnchor(),
+                                    secondXAnchor:sa.secondXAnchor(),
+                                    id_currency:$("#id_currency").val()
+                                },
+                                dataType:"json",
+                                success:function(response){
+                                    var selectedAnnotation = plot.annotations().getSelectedAnnotation();
+                                    // remove the selected annotation
+                                    plot.annotations().removeAnnotation(selectedAnnotation);
+                                    toastr.success('Zone deleted.', 'Success!');
+                                }
+                            });
+                        }
+                      });
                 });
 
                 });

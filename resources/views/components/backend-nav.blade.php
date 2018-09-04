@@ -18,7 +18,7 @@
                         <li class="sidebar-item"> <a class="sidebar-link" href="{{ route('trend') }}" aria-expanded="false"><i class="icon-Bar-Chart5"></i><span class="hide-menu">Trend </span></a>
                         </li>
                         <li class="nav-small-cap"><i class="mdi mdi-dots-horizontal"></i> <span class="hide-menu">Setting</span></li>
-                        <li class="sidebar-item"> <a class="sidebar-link" href="{{ route('trend') }}" aria-expanded="false"><i class="icon-Gears"></i><span class="hide-menu">Setting </span></a>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="{{ route('setting') }}" aria-expanded="false"><i class="icon-Gears"></i><span class="hide-menu">Setting </span></a>
                         </li>
                     </ul>
                 </nav>

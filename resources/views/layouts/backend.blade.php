@@ -11,10 +11,12 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/favicon.png') }}">
-    <title>AdminBite admin Template - The Ultimate Multipurpose admin template</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/earth.png') }}">
+    <title>Globe Stock - Money Exchange</title>
     <!-- This page plugin CSS -->
     <link href="{{ asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css') }}" rel="stylesheet">
+    <!-- Toastr -->
+    <link href="{{ asset('assets/libs/toastr/build/toastr.min.css') }}" rel="stylesheet">
     <!-- AnyChart -->
     <link rel="stylesheet" href="https://cdn.anychart.com/releases/8.3.0/css/anychart-ui.min.css" />
     <link rel="stylesheet" href="https://cdn.anychart.com/releases/8.3.0/fonts/css/anychart-font.min.css" />
@@ -138,6 +140,8 @@
     <script src="{{ asset('assets/extra-libs/DataTables/datatables.min.js') }}"></script>
     <!-- Sweet Alert -->
     <script src="{{ asset('assets/sweetalert/dist/sweetalert.min.js') }}"></script>
+     <!-- Toastr -->
+     <script src="{{ asset('assets/libs/toastr/build/toastr.min.js') }}"></script>
     <!-- Jquery Validation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js"></script>

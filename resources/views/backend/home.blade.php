@@ -75,7 +75,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="m-r-10">
-                                    <a href="{{ route('manage-admin') }}" class="btn btn-circle btn-lg bg-warning">
+                                    <a href="{{ route('setting') }}" class="btn btn-circle btn-lg bg-warning">
                                         <i class="icon-Gears text-white"></i>
                                     </a>
                                 </div>

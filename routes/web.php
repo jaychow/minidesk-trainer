@@ -40,11 +40,24 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logout');
 
+    Route::prefix('profile')->group(function(){
+        Route::post('/checkEmail', 'HomeController@checkEmail')->name('profile.checkEmail');
+        Route::get('/getDetails', 'HomeController@getDetails')->name('profile.getDetails');
+        Route::post('/update','HomeController@update')->name('profile.update');
+        Route::post('/updatePassword','HomeController@updatePassword')->name('profile.updatePassword');
+        Route::get('/', 'HomeController@profile')->name('profile');
+    });
+
     Route::prefix('admin')->group(function(){
         Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
         Route::post('/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
         Route::get('/logout', 'Auth\AdminLoginController@logout')->name('admin.logout');
         Route::post('/getDetailsById', 'AdminController@getDetailsById')->name('admin.getdetailbyid');
+        Route::get('/profile', 'AdminController@profile')->name('admin.profile');
+        Route::post('/checkEmail', 'AdminController@checkEmail')->name('admin.checkEmail');
+        Route::get('/getDetails', 'AdminController@getDetails')->name('admin.getDetails');
+        Route::post('/update','AdminController@update')->name('admin.update');
+        Route::post('/updatePassword','AdminController@updatePassword')->name('admin.updatePassword');
         Route::get('/', 'AdminController@index')->name('admin.dashboard');
     });
 
@@ -73,5 +86,10 @@ Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logou
         Route::get('/getCurrency', 'TrendController@getCurrency')->name('data-import.get-currency');
         Route::get('/', 'TrendController@index')->name('trend');
     });
+
+    Route::prefix('setting')->group(function(){
+        Route::get('/', 'SettingController@index')->name('setting');
+    });
+
 
 
