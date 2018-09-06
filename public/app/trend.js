@@ -80,21 +80,28 @@ anychart.onDocumentReady(function(){
                 chart.draw();
 
                 chart.listen("annotationChangeFinish", function(e){
-                    if(finishedZone != undefined){
-                        console.log(finishedZone.xAnchor()+"><"+editedZone.xAnchor())
-                    }else{
-                        console.log("finish undefined");
-                    }
+                    console.log("finished"+e.annotation.color());
+                    // if(finishedZone != undefined){
+                    //     console.log(editedZone.color()+"><"+finishedZone.color())
+                    // }else{
+                    //     console.log("finish undefined");
+                    // }
                 });
 
                 chart.listen("annotationChange", function(e){
-                    finishedZone = e.annotation;
+                    console.log("change"+e.annotation.color());
+                    //finishedZone = e.annotation;
+                });
+
+                chart.listen("annotationChangeStart", function(e){
+                    console.log("start"+e.annotation.color());
                 });
 
                 chart.listen("annotationSelect", function(e){
-                    if(editedZone == undefined){
-                        editedZone = e.annotation;
-                    }
+                    console.log(e.annotation);
+                    // if(editedZone == undefined){
+                    //     editedZone = e.annotation;
+                    // }
                 });
 
                 // reset the select list to the first option

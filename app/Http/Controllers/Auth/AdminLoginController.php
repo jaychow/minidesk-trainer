@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Auth;
+use App\Admin as Admin;
 
 class AdminLoginController extends Controller
 {
@@ -34,8 +36,23 @@ class AdminLoginController extends Controller
         }
 
         //if failed redirect back
-        return redirect()->back()->withinput($request->only('email', 'remember'));
+        if ( ! Admin::where('email', $request->email)->first() ) {
+            return redirect()->back()
+                ->withinput($request->only('email', 'remember'))
+                ->withErrors([
+                    'email' => "These credentials do not match our records."
+                ]);
+        }
+
+        if ( ! Admin::where('email', $request->email)->where('password',  Hash::make($request->input('password')))->first() ) {
+            return redirect()->back()
+                ->withinput($request->only('email', 'remember'))
+                ->withErrors([
+                    'password' => "Wrong password."
+                ]);
+        }
     }
+
 
     public function logout(Request $request)
     {

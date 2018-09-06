@@ -61,6 +61,7 @@ class TradeData extends Model
         $result = DB::table('zones')->where("id_currency",  $request->input('id_currency'))->get();
         foreach($result as $item){
             $row = array(
+                'id' => $item->id,
                 'enabled' => $item->enabled,
                 'type' => $item->type,
                 'color' => $item->color,

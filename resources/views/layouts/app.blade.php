@@ -102,6 +102,9 @@
     <script src="{{ asset('assets/libs/select2/dist/js/select2.min.js') }}"></script>
     <!-- Sweet Alert -->
     <script src="{{ asset('assets/sweetalert/dist/sweetalert.min.js') }}"></script>
+    <!-- Jquery Validation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js"></script>
     <!-- AnyChart -->
     <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-base.min.js"></script>
     <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-ui.min.js"></script>

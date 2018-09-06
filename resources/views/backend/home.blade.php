@@ -9,7 +9,7 @@
                 <!-- ============================================================== -->
                 <div class="card-group">
                     <!-- Card -->
-                    <div class="card">
+                    <div class="card card-hover">
                         <div class="card-body">
                             @if (session('status'))
                                 <div class="alert alert-success" role="alert">
@@ -33,7 +33,7 @@
                     </div>
                     <!-- Card -->
                     <!-- Card -->
-                    <div class="card">
+                    <div class="card card-hover">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="m-r-10">
@@ -52,7 +52,7 @@
                     </div>
                     <!-- Card -->
                     <!-- Card -->
-                    <div class="card">
+                    <div class="card card-hover">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="m-r-10">
