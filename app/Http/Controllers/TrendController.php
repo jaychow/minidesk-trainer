@@ -129,5 +129,17 @@ class TrendController extends Controller
         return response()->json($data);
     }
 
+    public function saveTrendLineChange(Request $request){
+
+        $update = DB::table('zones')->where("id", $request->input('id'))->update(array(
+            'xAnchor' => $request->input('xAnchor'),
+            'secondXAnchor' => $request->input('secondXAnchor'),
+            'valueAnchor' => $request->input('valueAnchor'),
+            'secondValueAnchor' => $request->input('secondValueAnchor'),
+        ));
+
+        return response()->json($update);
+    }
+
 
 }

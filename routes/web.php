@@ -84,6 +84,7 @@ Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logou
         Route::post('/removeTrendLines', 'TrendController@removeTrendLines')->name('data-import.remove-trend-line');
         Route::post('/saveToJsonFile', 'TrendController@saveToJsonFile')->name('data-import.save-json-file');
         Route::get('/getCurrency', 'TrendController@getCurrency')->name('data-import.get-currency');
+        Route::post('/saveTrendLineChange', 'TrendController@saveTrendLineChange')->name('data-import.save-trend-line-change');
         Route::get('/', 'TrendController@index')->name('trend');
     });
 

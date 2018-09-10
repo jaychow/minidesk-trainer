@@ -2,6 +2,8 @@ var drag;
 var selectedMarker;
 // var chart;
 // var plot;
+var anns = [];
+var edited;
 
 anychart.onDocumentReady(function(){
 
@@ -79,29 +81,98 @@ anychart.onDocumentReady(function(){
                 // initiate chart drawing
                 chart.draw();
 
-                chart.listen("annotationChangeFinish", function(e){
-                    console.log("finished"+e.annotation.color());
-                    // if(finishedZone != undefined){
-                    //     console.log(editedZone.color()+"><"+finishedZone.color())
-                    // }else{
-                    //     console.log("finish undefined");
-                    // }
-                });
 
-                chart.listen("annotationChange", function(e){
-                    console.log("change"+e.annotation.color());
-                    //finishedZone = e.annotation;
+                chart.listen("annotationSelect", function(e){
+                    //console.log("select"+e.annotation.color());
+                    var x = e.annotation;
+                    $.each(anns.annotationsList, function(k,v){
+                        if(v.color == x.color()
+                            && v.xAnchor == x.xAnchor()
+                            && v.secondXAnchor == x.secondXAnchor()
+                            && v.valueAnchor == x.valueAnchor()
+                            && v.secondValueAnchor == x.secondValueAnchor()
+                            )
+                        {
+                            edited = v;
+                            //console.log("Same "+v.id);
+                        }
+                    })
                 });
 
                 chart.listen("annotationChangeStart", function(e){
-                    console.log("start"+e.annotation.color());
+                    //console.log("start"+e.annotation.color());
                 });
 
-                chart.listen("annotationSelect", function(e){
-                    console.log(e.annotation);
-                    // if(editedZone == undefined){
-                    //     editedZone = e.annotation;
-                    // }
+                chart.listen("annotationChange", function(e){
+                    //console.log("change"+e.annotation.color());
+                });
+
+                chart.listen("annotationChangeFinish", function(e){
+                    //console.log("finished"+e.annotation.color());
+                });
+
+                chart.listen("annotationUnselect", function(e){
+                    //console.log("unselect"+e.annotation.color());
+                    var x = e.annotation;
+                    if(edited != undefined && edited.color == x.color()
+                            && ( edited.xAnchor != x.xAnchor()
+                            || edited.secondXAnchor != x.secondXAnchor()
+                            || edited.valueAnchor != x.valueAnchor()
+                            || edited.secondValueAnchor != x.secondValueAnchor() )
+                            )
+                        {
+                            var id =
+                            swal({
+                                title: "Do you want to save the change?",
+                                icon: "info",
+                                buttons: true,
+                                dangerMode: false,
+                              })
+                              .then((willDelete) => {
+                                if (willDelete) {
+                                    var match = [];
+                                    $.each(anns.annotationsList, function(k,v){
+                                        if(v.color == edited.color
+                                            && v.xAnchor == edited.xAnchor
+                                            && v.secondXAnchor == edited.secondXAnchor
+                                            && v.valueAnchor == edited.valueAnchor
+                                            && v.secondValueAnchor == edited.secondValueAnchor
+                                            )
+                                        {
+                                            v.xAnchor = x.xAnchor();
+                                            v.secondXAnchor = x.secondXAnchor();
+                                            v.valueAnchor = x.valueAnchor();
+                                            v.secondValueAnchor = x.secondValueAnchor();
+                                            match = v;
+                                            return false;
+                                        }
+                                    });
+
+                                    $.ajax({
+                                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                        url:site_url+"/trend/saveTrendLineChange",
+                                        type:"post",
+                                        data:{
+                                            id:match.id,
+                                            xAnchor:match.xAnchor,
+                                            secondXAnchor:match.secondXAnchor,
+                                            valueAnchor:match.valueAnchor,
+                                            secondValueAnchor:match.secondValueAnchor,
+                                        },
+                                        dataType:"json",
+                                        success:function(){
+                                            toastr.success('Zone saved.', 'Success!');
+                                        }
+                                    });
+
+                                }else{
+                                    x.xAnchor(edited.xAnchor);
+                                    x.secondXAnchor(edited.secondXAnchor);
+                                    x.valueAnchor(edited.valueAnchor);
+                                    x.secondValueAnchor(edited.secondValueAnchor);
+                                }
+                              });
+                        }
                 });
 
                 // reset the select list to the first option
@@ -147,7 +218,6 @@ anychart.onDocumentReady(function(){
                 });
 
                 // load all saved annotations
-
                 var annotations = function(){
                     $.ajax({
                         url:site_url+"/trend/getTrendLines",
@@ -158,6 +228,7 @@ anychart.onDocumentReady(function(){
                         dataType:"json",
                         success:function(data){
                             //console.log(data);
+                            anns = $.parseJSON(data);
                             chart.plot().annotations().fromJson(data);
                         }
                     });

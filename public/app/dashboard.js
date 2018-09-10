@@ -80,6 +80,11 @@ anychart.onDocumentReady(function(){
                         success:function(data){
                             //console.log(data);
                             chart.plot().annotations().fromJson(data);
+                            // get the number of annotations
+                            var annotationsCount = plot.annotations().getAnnotationsCount();
+                            for(var i = 0; i < annotationsCount; i++){
+                                plot.annotations().getAnnotationAt(i).allowEdit(false);
+                            }
                         }
                     });
                 };
