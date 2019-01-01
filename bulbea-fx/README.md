@@ -79,10 +79,10 @@ Split your data set into training and testing sets.
 >>> pplt.plot(p)
 >>> pplt.show()
 ```
-![](plot.png)
+![](.github/plot.png)
 
 ### Dependencies
-1. quandl
+1. fxcm
 2. keras
 3. tweepy
 4. textblob
