@@ -73,7 +73,7 @@ Split your data set into training and testing sets.
 >>> from sklearn.metrics import mean_squared_error
 >>> p = rnn.predict(Xtest)
 >>> mean_squared_error(ytest, p)
-0.00042927869370525931
+0.00019196501613317127
 >>> import matplotlib.pyplot as pplt
 >>> pplt.plot(ytest)
 >>> pplt.plot(p)
