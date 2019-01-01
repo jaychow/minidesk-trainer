@@ -79,7 +79,7 @@ Split your data set into training and testing sets.
 >>> pplt.plot(p)
 >>> pplt.show()
 ```
-![](.github/plot.png)
+![](plot.png)
 
 ### Dependencies
 1. fxcm
