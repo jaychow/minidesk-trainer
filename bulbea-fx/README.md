@@ -1,4 +1,4 @@
-# bulbea
+# bulbea-forex
 > *"Deep Learning based Python Library for Stock Market Prediction and Modelling [Modified for Forex Trading]."*
 
 
@@ -89,4 +89,4 @@ Split your data set into training and testing sets.
 
 ### License
 This code has been released under the [Apache 2.0 License](LICENSE).
-# bulbea-forex
+
