@@ -11,7 +11,7 @@
 ### Installation
 Clone the git repository:
 ```console
-$ git clone https://github.com/achillesrasquinha/bulbea.git && cd bulbea
+$ git clone https://github.com/jaychow/minidesk-trainer && cd minidesk-trainer/bulbea-fx
 ```
 
 Install necessary dependencies
