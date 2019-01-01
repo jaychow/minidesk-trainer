@@ -1,8 +1,0 @@
-six
-matplotlib
-Pillow
-quandl
-keras
-tweepy
-textblob
-Flask
