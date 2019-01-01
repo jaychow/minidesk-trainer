@@ -40,15 +40,15 @@ $ pip install tensorflow-gpu # GPU - Requires CUDA, CuDNN
 Create a share object.
 ```python
 >>> import bulbea as bb
->>> share = bb.Share('YAHOO', 'GOOGL')
->>> share.data
-# Open        High         Low       Close      Volume  \
-# Date                                                                     
-# 2004-08-19   99.999999  104.059999   95.959998  100.339998  44659000.0   
-# 2004-08-20  101.010005  109.079998  100.500002  108.310002  22834300.0   
-# 2004-08-23  110.750003  113.479998  109.049999  109.399998  18256100.0   
-# 2004-08-24  111.239999  111.599998  103.570003  104.870002  15247300.0   
-# 2004-08-25  104.960000  108.000002  103.880003  106.000005   9188600.0
+>>> share = bb.Share(source='AUD', ticker='USD', start='2008-06-01',end='2018-06-30')
+>>> share.data.head()
+#	Open	Close	High	Low	Adj. Open	Adj. Close	Adj. High	Adj. Low	Volume
+#date									
+#2008-06-02 21:00:00	0.95567	0.95507	0.95662	0.95012	0.95597	0.95542	0.95687	0.95037	25579
+#2008-06-03 21:00:00	0.95507	0.95230	0.96117	0.95072	0.95542	0.95265	0.96137	0.95097	29560
+#2008-06-04 21:00:00	0.95230	0.95725	0.96282	0.94856	0.95265	0.95770	0.96301	0.94885	32409
+#2008-06-05 21:00:00	0.95725	0.95876	0.95914	0.95102	0.95770	0.95885	0.95945	0.95127	29836
+#2008-06-06 21:00:00	0.95876	0.96243	0.96401	0.95642	0.95885	0.96277	0.96446	0.95667	23165
 ...
 ```
 ##### b. Preprocessing
@@ -67,10 +67,8 @@ Split your data set into training and testing sets.
 >>> from bulbea.learn.models import RNN
 >>> rnn = RNN([1, 100, 100, 1]) # number of neurons in each layer
 >>> rnn.fit(Xtrain, ytrain)
-# Epoch 1/10
-# 1877/1877 [==============================] - 6s - loss: 0.0039
-# Epoch 2/10
-# 1877/1877 [==============================] - 6s - loss: 0.0019
+#Epoch 1/1
+#1717/1717 [==============================] - 3s 2ms/step - loss: 6.5797e-04
 ...
 ```
 
@@ -86,24 +84,6 @@ Split your data set into training and testing sets.
 >>> pplt.show()
 ```
 ![](.github/plot.png)
-
-#### 2. Sentiment Analysis
-Add your Twitter credentials to your environment variables.
-```bash
-export BULBEA_TWITTER_API_KEY="<YOUR_TWITTER_API_KEY>"
-export BULBEA_TWITTER_API_SECRET="<YOUR_TWITTER_API_SECRET>"
-
-export BULBEA_TWITTER_ACCESS_TOKEN="<YOUR_TWITTER_ACCESS_TOKEN>"
-export BULBEA_TWITTER_ACCESS_TOKEN_SECRET="<YOUR_TWITTER_ACCESS_TOKEN_SECRET>"
-```
-And then,
-```python
->>> bb.sentiment(share)
-0.07580128205128206
-```
-
-### Documentation
-Detailed documentation is available [here](http://bulbea.readthedocs.io/en/latest/).
 
 ### Dependencies
 1. quandl
