@@ -84,7 +84,7 @@ Split your data set into training and testing sets.
 ### Dependencies
 1. fxcm
 2. keras
-3. tweepy
+3. tweepy (optional)
 4. textblob
 
 ### License
