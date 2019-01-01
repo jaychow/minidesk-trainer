@@ -1,14 +1,10 @@
 # bulbea
-> *"Deep Learning based Python Library for Stock Market Prediction and Modelling."*
+> *"Deep Learning based Python Library for Stock Market Prediction and Modelling [Modified for Forex Trading]."*
 
-[![Gitter](https://img.shields.io/gitter/room/bulbea/bulbea.svg)](https://gitter.im/bulbea/bulbea) [![Documentation Status](https://readthedocs.org/projects/bulbea/badge/?version=latest)](http://bulbea.readthedocs.io/en/latest/?badge=latest)
-
-![](.github/bulbea.png)
 
 ### Table of Contents
 * [Installation](#installation)
 * [Usage](#usage)
-* [Documentation](#documentation)
 * [Dependencies](#dependencies)
 * [License](#license)
 
@@ -83,7 +79,7 @@ Split your data set into training and testing sets.
 >>> pplt.plot(p)
 >>> pplt.show()
 ```
-![](.github/plot.png)
+![](plot.png)
 
 ### Dependencies
 1. quandl
