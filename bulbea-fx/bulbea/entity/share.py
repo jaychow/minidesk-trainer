@@ -172,8 +172,10 @@ class Share(Entity):
         '''
         self.source    = source
         self.ticker    = ticker
+        self.start     = start
+        self.end       = end
 
-        self.update(start = start, end = end, latest = latest, cache = cache)
+        #self.update(start = start, end = end, latest = latest, cache = cache)
 
     def update(self, start = None, end = None, latest = None, cache = False):
         '''
@@ -191,16 +193,19 @@ class Share(Entity):
             code     = self.ticker
         ))
         '''
-        self.data = self.get_historical_data(start=start, end=end, symbol='{database}/{code}'.format(
+        print('bulbea updated on 2019/1/3 15:44')
+        self.data = self.get_historical_data(start=self.start, end=self.end, symbol='{database}/{code}'.format(
             database = self.source,
             code     = self.ticker
         ))
+        
         self.length  =  len(self.data)
         self.attrs   = list(self.data.columns)
+        
 
     def get_historical_data(self, symbol, start, end):
-        TOKEN="06cab51095c3a74ca8518e3d224fb185e9d7633c"
-        con = fxcmpy.fxcmpy(access_token=TOKEN, log_level='error')
+        #TOKEN="06cab51095c3a74ca8518e3d224fb185e9d7633c"
+        #con = fxcmpy.fxcmpy(access_token=TOKEN, log_level='error')
         con = fxcmpy.fxcmpy(config_file='fxcm.cfg', server='demo')
         start = datetime.datetime.strptime(start, "%Y-%m-%d")
         end = datetime.datetime.strptime(end, "%Y-%m-%d")
@@ -210,6 +215,8 @@ class Share(Entity):
         print(diff)
         df = pd.DataFrame(data)
         df = df.rename(columns={'date':'Date','bidopen':'Open', 'bidclose':'Close','bidhigh':'High','bidlow':'Low', 'askopen':'Adj. Open','askclose':'Adj. Close','askhigh':'Adj. High','asklow':'Adj. Low','tickqty':'Volume'})
+        con.close()
+        print(con.is_connected())
         return df
 
     def __len__(self):
